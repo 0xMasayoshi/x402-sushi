@@ -53,7 +53,7 @@ export function ApiStatus({ intervalMs = 30_000 }: { intervalMs?: number }) {
 	});
 
 	const data = q.data;
-	const isUp = data?.ok ?? false;
+	const isDown = !q.isLoading && !data?.ok
 
 	return (
 		<div className="flex items-center gap-3">
@@ -74,13 +74,13 @@ export function ApiStatus({ intervalMs = 30_000 }: { intervalMs?: number }) {
 			/>
 
 			<Badge
-				className={isUp ? "bg-green-600 text-white" : "bg-red-600 text-white"}
+				className={isDown ? "bg-red-600 text-white" : "bg-green-600 text-white"}
 			>
-				{isUp ? "UP" : "DOWN"}
+				{isDown ? "DOWN" : "UP"}
 			</Badge>
 
 			<div className="text-xs text-muted-foreground">
-				{typeof data?.latency === "number" ? `${data.latency} ms` : "—"}
+				{typeof data?.latency === "number" ? `${data.latency} ms` : "— ms"}
 			</div>
 
 			<Button
