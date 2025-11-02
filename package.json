@@ -1,0 +1,28 @@
+{
+  "name": "x402-sushi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "openapi:pull": "node scripts/pull-openapi.mjs",
+    "predev": "pnpm openapi:pull",
+    "prebuild": "pnpm openapi:pull",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^12.1.0",
+    "turbo": "^2.6.0"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "facilitators@0.0.7": "patches/facilitators@0.0.7.patch"
+    }
+  }
+}

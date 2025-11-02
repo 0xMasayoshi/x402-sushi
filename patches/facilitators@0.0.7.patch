@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index e0beb30e040a9746dc8d74abec166ce17c29d5f4..6587f2992b193863e4c4869166ea5ae3f9c348f5 100644
+--- a/package.json
++++ b/package.json
+@@ -19,7 +19,6 @@
+   ],
+   "scripts": {
+     "build": "tsup",
+-    "postinstall": "pnpm run build",
+     "prepublishOnly": "pnpm run build",
+     "check:types": "tsc --noEmit",
+     "lint": "eslint",
