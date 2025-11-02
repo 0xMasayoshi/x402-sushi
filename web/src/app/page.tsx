@@ -35,7 +35,7 @@ export default function Page() {
 								className="bg-primary text-primary-foreground hover:opacity-90"
 							>
 								<Link
-									href="https://scan.x402.example"
+									href="https://www.x402scan.com/server/26424cc4-4527-4349-a9e5-968e95801e65"
 									target="_blank"
 									rel="noreferrer"
 								>
@@ -49,7 +49,7 @@ export default function Page() {
 								className="border-border hover:bg-secondary"
 							>
 								<Link
-									href="https://github.com/your-org/your-repo"
+									href="https://github.com/0xMasayoshi/x402-sushi"
 									target="_blank"
 									rel="noreferrer"
 								>
