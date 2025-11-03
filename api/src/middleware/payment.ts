@@ -534,6 +534,13 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
               },
             }
           },
+          outputSchema: {
+            type: "number",
+            description: "Token price in USD",
+            minimum: 0,
+            example: 123.45,
+            examples: [0.99, 1.23, 2500.001]
+          }
         },
       },
       "/prices": {
@@ -551,6 +558,29 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
                 required: true
               }
             }
+          },
+          outputSchema: {
+            type: "object",
+            description: "Mapping of 0x-prefixed token addresses to USD prices",
+            additionalProperties: false,
+            minProperties: 1,
+            patternProperties: {
+              "^0x[a-fA-F0-9]{40}$": {
+                type: "number",
+                minimum: 0,
+                description: "USD price for the token"
+              }
+            },
+            example: {
+              "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": 2837.6709,
+              "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2": 1.0432
+            },
+            examples: [
+              {
+                "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": 2837.6709,
+                "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": 1.0
+              }
+            ]
           }
         }
       },
