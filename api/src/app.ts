@@ -15,9 +15,7 @@ export function init() {
     const app = new Hono();
 
     // static
-    app.use("/favicon.ico", serveStatic({ path: "./public/favicon.ico" }));
-    app.use("/og.png", serveStatic({ path: "./public/og.png" }));
-    app.use("/", serveStatic({ path: "./public/index.html" }));
+    app.use("/", serveStatic({ root: "./public" }));
 
     // public
     app.route("/health", health);
