@@ -39,7 +39,7 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
               },
               fee: {
                 type: "number",
-                description: "Fee fraction (0–0.5)",
+                description: "Fee percentage (0–50%)",
                 minimum: 0,
                 maximum: 0.5,
                 default: 0
@@ -532,6 +532,13 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
                 pattern: "^0x[a-fA-F0-9]{40}$",
                 required: true
               },
+            },
+            headerFields: {
+              "content-type": {
+                type: "string",
+                description: "MIME type of the request body",
+                default: "application/json"
+              }
             }
           },
           outputSchema: {
@@ -556,6 +563,13 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
                 type: "number",
                 description: "Supported EVM chain id",
                 required: true
+              }
+            },
+            headerFields: {
+              "content-type": {
+                type: "string",
+                description: "MIME type of the request body",
+                default: "application/json"
               }
             }
           },
