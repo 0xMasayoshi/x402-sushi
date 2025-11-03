@@ -6,11 +6,12 @@ import { EvmChainId, MULTISIG_ADDRESS, nativeAddress, WNATIVE_ADDRESS } from "su
 describe("/swap", () => {
   const app = init();
 
-  it("POST /swap/:chainId returns route/tx", async () => {
-    const res = await app.request(`/swap/${EvmChainId.ETHEREUM}`, {
+  it("POST /swap returns route/tx", async () => {
+    const res = await app.request("/swap", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        chainId: EvmChainId.ETHEREUM,
         tokenIn: nativeAddress,
         tokenOut: WNATIVE_ADDRESS[EvmChainId.ETHEREUM],
         sender: MULTISIG_ADDRESS[EvmChainId.ETHEREUM],
@@ -26,10 +27,11 @@ describe("/swap", () => {
   });
 
   it("400 on invalid address", async () => {
-    const res = await app.request(`/swap/${EvmChainId.ARBITRUM}`, {
+    const res = await app.request("/swap", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        chainId: EvmChainId.ARBITRUM,
         tokenIn: "horse", // invalid
         tokenOut: WNATIVE_ADDRESS[EvmChainId.ARBITRUM],
         sender: MULTISIG_ADDRESS[EvmChainId.ARBITRUM],

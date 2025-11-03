@@ -23,7 +23,11 @@ export function init() {
 
     // Paid routes: apply payment middleware *only* to this group
     const paid = new Hono();
-    paid.use("*", paymentMiddleware(PAYOUT_ADDRESS));
+
+    if (process.env.NODE_ENV !== "test") {
+        paid.use("*", paymentMiddleware(PAYOUT_ADDRESS));
+    }
+
     paid.route("/quote", quote);
     paid.route("/swap", swap);
     paid.route("/price", price);

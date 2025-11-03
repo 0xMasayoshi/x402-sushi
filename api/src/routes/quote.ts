@@ -6,9 +6,8 @@ import { TransferValue } from "sushi/evm";
 import { parseAddressList, parseDexList, swapApiChainId } from "../utils/zod.js";
 import { API_URL } from "../config.js";
 
-export const quote = new Hono();
-
-const quoteParamsSchema = z.object({
+const quoteParamSchema = z.object({
+  chainId: swapApiChainId,
   tokenIn: sz.evm.address(),
   tokenOut: sz.evm.address(),
   amount: z.coerce.bigint(),
@@ -31,23 +30,15 @@ const quoteParamsSchema = z.object({
   referrer: z.string().default("x402"),
 });
 
-type QuoteParams = z.infer<typeof quoteParamsSchema>;
+type QuoteParams = z.infer<typeof quoteParamSchema>;
 
-
-const pathSchema = z.object({
-    chainId: swapApiChainId
-})
+export const quote = new Hono();
 
 /**
- * POST /quote/:chainId
+ * POST /quote
  * Validates with Zod (no transforms/defaults) and forwards the **raw** query to Sushi.
  */
-quote.post("/:chainId", async (c) => {
-  // validate path
-  const p = pathSchema.safeParse(c.req.param());
-  if (!p.success) return c.json({ error: p.error.format() }, 400);
-  const { chainId } = p.data;
-
+quote.post("/", async (c) => {
   // read raw JSON body
   let rawBody: unknown;
   try {
@@ -60,13 +51,16 @@ quote.post("/:chainId", async (c) => {
   }
 
   // validate against Zod schema
-  const v = quoteParamsSchema.safeParse(rawBody);
+  const v = quoteParamSchema.safeParse(rawBody);
   if (!v.success) return c.json({ error: v.error.format() }, 400);
+
+  const {chainId} = v.data
 
   const u = new URL(`${API_URL.replace(/\/$/, "")}/quote/v7/${chainId}`);
 
   // forward exact raw keys as strings (no renames; preserve client casing)
   for (const [k, val] of Object.entries(rawBody)) {
+    if (k === "chainId") continue;
     if (val === undefined || val === null || val === "") continue;
     // arrays -> comma-separated; bigint/number/boolean -> string
     if (Array.isArray(val)) {

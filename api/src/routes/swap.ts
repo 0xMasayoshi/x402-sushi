@@ -6,10 +6,9 @@ import { Hono } from "hono";
 import { API_URL } from "../config.js";
 import { StatusCode } from "hono/utils/http-status";
 
-export const swap = new Hono();
-
-export const swapParamsSchema = z
+const swapParamSchema = z
   .object({
+    chainId: swapApiChainId,
     tokenIn: sz.evm.address(),
     tokenOut: sz.evm.address(),
     sender: sz.evm.address(),
@@ -60,23 +59,16 @@ export const swapParamsSchema = z
     }
   });
 
-export type SwapParams = z.infer<typeof swapParamsSchema>;
+type SwapParams = z.infer<typeof swapParamSchema>;
 
-const pathSchema = z.object({
-  chainId: swapApiChainId,
-});
+export const swap = new Hono();
 
 /**
- * POST /swap/:chainId
+ * POST /swap/
  * - Validates query via swapParamsSchema
  * - Forwards the **raw** query (no renames) to Sushi /swap/v7/:chainId
  */
-swap.post("/:chainId", async (c) => {
-  // validate path
-  const p = pathSchema.safeParse(c.req.param());
-  if (!p.success) return c.json({ error: p.error.format() }, 400);
-  const { chainId } = p.data;
-
+swap.post("/", async (c) => {
   // read raw JSON body
   let rawBody: unknown;
   try {
@@ -89,13 +81,16 @@ swap.post("/:chainId", async (c) => {
   }
 
   // validate against Zod schema
-  const v = swapParamsSchema.safeParse(rawBody);
+  const v = swapParamSchema.safeParse(rawBody);
   if (!v.success) return c.json({ error: v.error.format() }, 400);
+
+  const {chainId} = v.data
 
   const u = new URL(`${API_URL.replace(/\/$/, "")}/swap/v7/${chainId}`);
 
   // forward exact raw keys as strings (no renames; preserve client casing)
   for (const [k, val] of Object.entries(rawBody)) {
+    if (k === "chainId") continue;
     if (val === undefined || val === null || val === "") continue;
     // arrays -> comma-separated; bigint/number/boolean -> string
     if (Array.isArray(val)) {

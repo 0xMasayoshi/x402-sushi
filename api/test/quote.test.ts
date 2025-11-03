@@ -6,11 +6,12 @@ import { EvmChainId, nativeAddress, WNATIVE_ADDRESS } from "sushi/evm";
 describe("/quote", () => {
   const app = init();
 
-  it("POST /quote/:chainId forwards raw body and returns success", async () => {
-    const res = await app.request(`/quote/${EvmChainId.ARBITRUM}`, {
+  it("POST /quote forwards raw body and returns success", async () => {
+    const res = await app.request(`/quote`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        chainId: EvmChainId.ARBITRUM,
         tokenIn: nativeAddress,
         tokenOut: WNATIVE_ADDRESS[EvmChainId.ARBITRUM],
         amount: "1000000000000000000",
@@ -24,10 +25,11 @@ describe("/quote", () => {
   });
 
   it("400 on invalid address", async () => {
-    const res = await app.request(`/quote/${EvmChainId.ARBITRUM}`, {
+    const res = await app.request(`/quote`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        chainId: EvmChainId.ARBITRUM,
         tokenIn: "horse", // invalid
         tokenOut: WNATIVE_ADDRESS[EvmChainId.ARBITRUM],
         amount: "1",

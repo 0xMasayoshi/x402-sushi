@@ -502,15 +502,10 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
           }
         },
       },
-      "/price/:chainId": {
+      "/price": {
         price: "$0.01",
         network: "base",
-        config: { description: "Returns token prices for specified chain" },
-      },
-      "/price/:chainId/:tokenAddress": {
-        price: "$0.005",
-        network: "base",
-        config: { description: "Returns price for a specific token" },
+        config: { description: "Returns token prices for specified chain with optional token address" },
       },
       // "/token": {
       //   price: "$0.001",
