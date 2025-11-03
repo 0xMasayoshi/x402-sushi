@@ -32,7 +32,7 @@ export const swapParamsSchema = z
     excludeTokens: z.string().transform(parseAddressList).default([]),
 
     includeRfq: z.coerce.boolean().default(false),
-    visualize: z.coerce.boolean().default(false), // keep key as-is; upstream may expect 'vizualize' if client sends it
+    visualize: z.coerce.boolean().default(false),
     debug: z.coerce.boolean().default(false),
     referrer: z.string().default("x402"),
     simulate: z.coerce.boolean().default(false),
@@ -67,26 +67,45 @@ const pathSchema = z.object({
 });
 
 /**
- * GET /swap/:chainId
+ * POST /swap/:chainId
  * - Validates query via swapParamsSchema
  * - Forwards the **raw** query (no renames) to Sushi /swap/v7/:chainId
  */
-swap.get("/:chainId", async (c) => {
-  // validate :chainId from path
+swap.post("/:chainId", async (c) => {
+  // validate path
   const p = pathSchema.safeParse(c.req.param());
   if (!p.success) return c.json({ error: p.error.format() }, 400);
   const { chainId } = p.data;
 
-  // validate query (but we'll forward the original raw)
-  const raw = c.req.query(); // Record<string, string>
-  const v = swapParamsSchema.safeParse(raw);
+  // read raw JSON body
+  let rawBody: unknown;
+  try {
+    rawBody = await c.req.json();
+  } catch {
+    return c.json({ error: { _error: "Invalid JSON body" } }, 400);
+  }
+  if (!rawBody || typeof rawBody !== "object" || Array.isArray(rawBody)) {
+    return c.json({ error: { _error: "Body must be a JSON object" } }, 400);
+  }
+
+  // validate against Zod schema
+  const v = swapParamsSchema.safeParse(rawBody);
   if (!v.success) return c.json({ error: v.error.format() }, 400);
 
   const u = new URL(`${API_URL.replace(/\/$/, "")}/swap/v7/${chainId}`);
 
-  // forward exact raw params; do not change keys (e.g. if client sends 'vizualize')
-  for (const [k, val] of Object.entries(raw)) {
-    if (val !== "") u.searchParams.set(k, val);
+  // forward exact raw keys as strings (no renames; preserve client casing)
+  for (const [k, val] of Object.entries(rawBody)) {
+    if (val === undefined || val === null || val === "") continue;
+    // arrays -> comma-separated; bigint/number/boolean -> string
+    if (Array.isArray(val)) {
+      if (val.length > 0) u.searchParams.set(k, val.join(","));
+    } else if (typeof val === "object") {
+      // avoid sending objects (not supported upstream)
+      u.searchParams.set(k, JSON.stringify(val));
+    } else {
+      u.searchParams.set(k, String(val));
+    }
   }
 
   const r = await fetch(u, { cache: "no-store" });

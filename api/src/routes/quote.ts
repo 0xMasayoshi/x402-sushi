@@ -39,23 +39,44 @@ const pathSchema = z.object({
 })
 
 /**
- * GET /quote/:chainId
+ * POST /quote/:chainId
  * Validates with Zod (no transforms/defaults) and forwards the **raw** query to Sushi.
  */
-quote.get("/:chainId", async (c) => {
+quote.post("/:chainId", async (c) => {
+  // validate path
   const p = pathSchema.safeParse(c.req.param());
   if (!p.success) return c.json({ error: p.error.format() }, 400);
   const { chainId } = p.data;
 
-  const raw = c.req.query(); // Record<string, string>
-  const v = quoteParamsSchema.safeParse(raw);
+  // read raw JSON body
+  let rawBody: unknown;
+  try {
+    rawBody = await c.req.json();
+  } catch {
+    return c.json({ error: { _error: "Invalid JSON body" } }, 400);
+  }
+  if (!rawBody || typeof rawBody !== "object" || Array.isArray(rawBody)) {
+    return c.json({ error: { _error: "Body must be a JSON object" } }, 400);
+  }
+
+  // validate against Zod schema
+  const v = quoteParamsSchema.safeParse(rawBody);
   if (!v.success) return c.json({ error: v.error.format() }, 400);
 
   const u = new URL(`${API_URL.replace(/\/$/, "")}/quote/v7/${chainId}`);
 
-  // forward exact raw params (no renames; keep upstream casing like 'vizualize' if client sent it)
-  for (const [k, v] of Object.entries(raw)) {
-    if (v !== "") u.searchParams.set(k, v);
+  // forward exact raw keys as strings (no renames; preserve client casing)
+  for (const [k, val] of Object.entries(rawBody)) {
+    if (val === undefined || val === null || val === "") continue;
+    // arrays -> comma-separated; bigint/number/boolean -> string
+    if (Array.isArray(val)) {
+      if (val.length > 0) u.searchParams.set(k, val.join(","));
+    } else if (typeof val === "object") {
+      // avoid sending objects (not supported upstream)
+      u.searchParams.set(k, JSON.stringify(val));
+    } else {
+      u.searchParams.set(k, String(val));
+    }
   }
 
   const r = await fetch(u, { cache: "no-store" });
