@@ -528,9 +528,9 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
               },
               tokenAddress: {
                 type: "string",
-                description: "",
+                description: "0x-prefixed token address",
                 pattern: "^0x[a-fA-F0-9]{40}$",
-                required: false
+                required: true
               },
             }
           },
