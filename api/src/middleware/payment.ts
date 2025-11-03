@@ -14,6 +14,11 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
           inputSchema: {
             bodyType: "json",
             bodyFields: {
+              chainId: {
+                type: "number",
+                description: "Supported EVM chain id",
+                required: true
+              },
               tokenIn: {
                 type: "string",
                 description: "Input token address (EVM address)",
@@ -235,6 +240,11 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
           inputSchema: {
             bodyType: "json",
             bodyFields: {
+              chainId: {
+                type: "number",
+                description: "Supported EVM chain id",
+                required: true
+              },
               tokenIn: {
                 type: "string",
                 description: "Input token address (EVM address)",
@@ -503,9 +513,46 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
         },
       },
       "/price": {
+        price: "$0.001",
+        network: "base",
+        config: {
+          discoverable: true,
+          description: "Returns token prices for specified token",
+          inputSchema: {
+            bodyType: "json",
+            bodyFields: {
+              chainId: {
+                type: "number",
+                description: "Supported EVM chain id",
+                required: true
+              },
+              tokenAddress: {
+                type: "string",
+                description: "",
+                pattern: "^0x[a-fA-F0-9]{40}$",
+                required: false
+              },
+            }
+          },
+        },
+      },
+      "/prices": {
         price: "$0.01",
         network: "base",
-        config: { description: "Returns token prices for specified chain with optional token address" },
+        config: {
+          discoverable: true,
+          description: "Returns token prices for specified chain",
+          inputSchema: {
+            bodyType: "json",
+            bodyFields: {
+              chainId: {
+                type: "number",
+                description: "Supported EVM chain id",
+                required: true
+              }
+            }
+          }
+        }
       },
       // "/token": {
       //   price: "$0.001",

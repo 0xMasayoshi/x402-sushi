@@ -7,6 +7,7 @@ import { token } from "./routes/token.js";
 import { quote } from "./routes/quote.js";
 import { swap } from "./routes/swap.js";
 import { PAYOUT_ADDRESS } from "./config.js";
+import { prices } from "./routes/prices.js";
 
 export function init() {
     if (!PAYOUT_ADDRESS) throw new Error('PAYOUT_ADDRESS not set')
@@ -31,6 +32,7 @@ export function init() {
     paid.route("/quote", quote);
     paid.route("/swap", swap);
     paid.route("/price", price);
+    paid.route("/prices", prices);
     paid.route("/token", token);
     app.route("/", paid);
 

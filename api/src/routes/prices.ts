@@ -5,20 +5,19 @@ import { API_URL } from "../config.js";
 import { swapApiChainId } from "../utils/zod.js";
 import { sz } from "sushi";
 
-const priceParamSchema = z.object({
+const pricesParamSchema = z.object({
   chainId: swapApiChainId,
-  tokenAddress: sz.evm.address()
 })
 
-type PriceParams = z.infer<typeof priceParamSchema>;
+type PricesParams = z.infer<typeof pricesParamSchema>;
 
-export const price = new Hono();
+export const prices = new Hono();
 
 /**
- * POST /price
- * - returns price number for that token on chainId
+ * POST /prices
+ * - returns prices map for chainId
  */
-price.post("/", async (c) => {
+prices.post("/", async (c) => {
   // read raw JSON body
   let rawBody: unknown;
   try {
@@ -31,14 +30,14 @@ price.post("/", async (c) => {
   }
 
   // validate against Zod schema
-  const parsed = priceParamSchema.safeParse(rawBody);
+  const parsed = pricesParamSchema.safeParse(rawBody);
   if (!parsed.success) return c.json({ error: parsed.error.format() }, 400);
 
-  const { chainId, tokenAddress } = parsed.data;
+  const { chainId } = parsed.data;
 
   // construct upstream URL:
-  //  - /price/v1/:chainId/:tokenAddress
-  const u = `${API_URL.replace(/\/$/, "")}/price/v1/${chainId}/${tokenAddress}`;
+  //  - /price/v1/:chainId
+  const u = `${API_URL.replace(/\/$/, "")}/price/v1/${chainId}`;
 
   const r = await fetch(u, { cache: "no-store" });
   const text = await r.text();

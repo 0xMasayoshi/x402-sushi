@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 import { init } from "../src/app.js";
 import { EvmChainId, WNATIVE_ADDRESS } from "sushi/evm";
 
-describe("/price", () => {
+describe("/price & /prices", () => {
   const app = init();
 
-  it("POST /price (map) returns a price map", async () => {
-    const res = await app.request(`/price`, {
+  it("POST /prices (map) returns a price map", async () => {
+    const res = await app.request(`/prices`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
