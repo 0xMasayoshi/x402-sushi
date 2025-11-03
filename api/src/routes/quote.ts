@@ -78,6 +78,7 @@ quote.post("/:chainId", async (c) => {
       u.searchParams.set(k, String(val));
     }
   }
+  u.searchParams.set('referrer', 'x402')
 
   const r = await fetch(u, { cache: "no-store" });
   const text = await r.text();
