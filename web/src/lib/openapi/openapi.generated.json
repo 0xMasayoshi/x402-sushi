@@ -63,7 +63,8 @@
         "description": "referrer",
         "required": false,
         "schema": {
-          "type": "string"
+          "type": "string",
+          "default": "none"
         }
       },
       "tokenIn": {
@@ -121,7 +122,7 @@
         "schema": {
           "type": "number",
           "minimum": 0,
-          "maximum": 1,
+          "maximum": 0.5,
           "default": 0
         }
       },
@@ -156,8 +157,9 @@
         "schema": {
           "type": "number",
           "minimum": 0,
+          "exclusiveMinimum": true,
           "maximum": 1,
-          "exclusiveMaximum": true
+          "default": 1
         }
       },
       "maxSlippage": {
@@ -232,9 +234,9 @@
           "type": "string"
         }
       },
-      "vizualize": {
+      "visualize": {
         "in": "query",
-        "name": "vizualize",
+        "name": "visualize",
         "description": "vizulaization",
         "required": false,
         "schema": {
@@ -249,7 +251,7 @@
         "required": false,
         "schema": {
           "type": "boolean",
-          "default": true
+          "default": false
         }
       },
       "override": {
@@ -269,7 +271,7 @@
         "required": false,
         "schema": {
           "type": "boolean",
-          "default": true
+          "default": false
         }
       }
     }
@@ -299,7 +301,8 @@
             "description": "referrer",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "none"
             }
           },
           {
@@ -339,7 +342,7 @@
             "schema": {
               "type": "number",
               "minimum": 0,
-              "maximum": 1,
+              "maximum": 0.5,
               "default": 0
             }
           },
@@ -365,8 +368,9 @@
             "schema": {
               "type": "number",
               "minimum": 0,
+              "exclusiveMinimum": true,
               "maximum": 1,
-              "exclusiveMaximum": true
+              "default": 1
             }
           },
           {
@@ -429,7 +433,7 @@
           },
           {
             "in": "query",
-            "name": "vizualize",
+            "name": "visualize",
             "description": "vizulaization",
             "required": false,
             "schema": {
@@ -514,7 +518,8 @@
             "description": "referrer",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "none"
             }
           },
           {
@@ -572,7 +577,7 @@
             "schema": {
               "type": "number",
               "minimum": 0,
-              "maximum": 1,
+              "maximum": 0.5,
               "default": 0
             }
           },
@@ -607,8 +612,9 @@
             "schema": {
               "type": "number",
               "minimum": 0,
+              "exclusiveMinimum": true,
               "maximum": 1,
-              "exclusiveMaximum": true
+              "default": 1
             }
           },
           {
@@ -685,7 +691,7 @@
           },
           {
             "in": "query",
-            "name": "vizualize",
+            "name": "visualize",
             "description": "vizulaization",
             "required": false,
             "schema": {
@@ -700,7 +706,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "default": true
+              "default": false
             }
           },
           {
@@ -720,7 +726,7 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "default": true
+              "default": false
             }
           }
         ],
