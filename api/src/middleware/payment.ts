@@ -1,5 +1,5 @@
 import { paymentMiddleware as _paymentMiddleware } from "x402-hono";
-import { payai } from "facilitators";
+import { openx402 } from "facilitators";
 
 export function paymentMiddleware(payoutAddress: `0x${string}`) {
   return _paymentMiddleware(
@@ -604,6 +604,6 @@ export function paymentMiddleware(payoutAddress: `0x${string}`) {
       //   config: { description: "On-chain token data" },
       // },
     },
-    payai
+    openx402
   );
 }
