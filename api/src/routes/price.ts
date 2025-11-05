@@ -19,6 +19,7 @@ export const price = new Hono();
  * - returns price number for that token on chainId
  */
 price.post("/", async (c) => {
+  console.log('/price')
   // read raw JSON body
   let rawBody: unknown;
   try {
@@ -44,5 +45,6 @@ price.post("/", async (c) => {
   const text = await r.text();
   const ct = r.headers.get("content-type") ?? "application/json";
   c.header("content-type", ct);
+  console.log('returning', text)
   return c.newResponse(text, r.status as StatusCode);
 });

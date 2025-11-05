@@ -39,6 +39,7 @@ export const quote = new Hono();
  * Validates with Zod (no transforms/defaults) and forwards the **raw** query to Sushi.
  */
 quote.post("/", async (c) => {
+  console.log('/quote')
   // read raw JSON body
   let rawBody: unknown;
   try {
@@ -76,6 +77,7 @@ quote.post("/", async (c) => {
 
   const r = await fetch(u, { cache: "no-store" });
   const text = await r.text();
+  console.log('returning', text)
   const ct = r.headers.get("content-type") ?? "application/json";
   c.header("content-type", ct);
   return c.newResponse(text, r.status as StatusCode);
